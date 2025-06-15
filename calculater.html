@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Generator</title>
+    <title>Calculator</title>
     <style>
         body {
             display: flex;
@@ -11,80 +11,43 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #1a1a2e; /* Deep navy blue */
+            background-color: #1c2526;
             margin: 0;
             font-family: Arial, sans-serif;
         }
 
-        .generator {
-            background-color: #1a1a2e; /* Deep navy blue */
+        .expression {
+            color: #d3d3d3;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-family: 'Cedarville Cursive', cursive;
+            text-align: right;
+            width: 300px;
+        }
+
+        .calculator {
+            background-color: #1c2526;
             padding: 20px;
             border-radius: 15px;
             width: 300px;
-            text-align: center;
         }
 
-        .input-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .length-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .length-section label {
-            color: #e0e0ff; /* Soft lavender */
-            font-size: 1em;
-        }
-
-        .length-section input[type="range"] {
-            width: 100%;
-        }
-
-        .length-section span {
-            color: #ff6f61; /* Coral red */
-            font-size: 1.2em;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .checkbox-section {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .checkbox-section label {
-            color: #e0e0ff; /* Soft lavender */
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        input[type="checkbox"] {
-            cursor: pointer;
-        }
-
-        .result {
-            color: #e0e0ff; /* Soft lavender */
-            font-size: 1.5em;
-            margin: 10px 0;
-            font-family: 'Cedarville Cursive', cursive;
-            background-color: #2e2e4a; /* Lighter navy */
-            padding: 10px;
+        .display {
+            background-color: #2a3b3c;
+            color: #d3d3d3;
+            padding: 15px;
+            font-size: 2em;
+            text-align: right;
             border-radius: 10px;
-            word-break: break-all;
+            margin-bottom: 10px;
+            height: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
         }
 
         .buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
         }
 
@@ -94,130 +57,191 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            background-color: #4a4a6e; /* Muted purple-blue */
-            color: #ff6f61; /* Coral red */
+            background-color: #3a4b4c;
+            color: #d3d3d3;
             transition: background-color 0.2s;
         }
 
         button:hover {
-            background-color: #5a5a8e; /* Lighter purple-blue */
+            background-color: #4a5b5c;
         }
 
         button:active {
-            background-color: #3e3e5e; /* Darker purple-blue */
+            background-color: #2a3b3c;
         }
 
-        .generate-btn {
-            background-color: #ff6f61; /* Coral red */
+        .clear, .backspace, button:nth-child(3), button:nth-child(4),
+        button:nth-child(8), button:nth-child(12), button:nth-child(16) {
+            color: #ff9500;
+        }
+
+        button:nth-child(1), button:nth-child(2), button:nth-child(3), button:nth-child(4),
+        button:nth-child(8), button:nth-child(12), button:nth-child(16) {
+            background-color: #2a3b3c;
+        }
+
+        button:nth-child(1):hover, button:nth-child(2):hover, button:nth-child(3):hover, button:nth-child(4):hover,
+        button:nth-child(8):hover, button:nth-child(12):hover, button:nth-child(16):hover {
+            background-color: #3a4b4c;
+        }
+
+        button:nth-child(5), button:nth-child(6), button:nth-child(7),
+        button:nth-child(9), button:nth-child(10), button:nth-child(11),
+        button:nth-child(13), button:nth-child(14), button:nth-child(15),
+        button:nth-child(17) {
+            font-family: 'Cedarville Cursive', cursive;
+            font-size: 1.8em;
+        }
+
+        .equals {
+            background-color: #ff9500;
             color: #fff;
+            grid-column: span 2;
         }
 
-        .generate-btn:hover {
-            background-color: #ff8a7a; /* Lighter coral */
+        .equals:hover {
+            background-color: #ffaa33;
         }
 
-        .generate-btn:active {
-            background-color: #e65a50; /* Darker coral */
+        .equals:active {
+            background-color: #e68a00;
         }
     </style>
 </head>
 <body>
-    <div class="generator">
-        <div class="input-section">
-            <div class="length-section">
-                <label for="length">Password Length: <span id="lengthValue">8</span></label>
-                <input type="range" id="length" min="4" max="20" value="8" oninput="updateLengthValue()">
-            </div>
-            <div class="checkbox-section">
-                <label><input type="checkbox" id="uppercase" checked> Uppercase (A-Z)</label>
-                <label><input type="checkbox" id="lowercase" checked> Lowercase (a-z)</label>
-                <label><input type="checkbox" id="numbers" checked> Numbers (0-9)</label>
-                <label><input type="checkbox" id="special" checked> Special Characters (!@#)</label>
-            </div>
-        </div>
-        <div class="result" id="result">-</div>
+    <div class="expression" id="expression"></div>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
         <div class="buttons">
-            <button onclick="clearInput()">C</button>
-            <button class="generate-btn" onclick="generatePassword()">Generate</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="backspace" onclick="backspace()">⟵</button>
+            <button onclick="appendToDisplay('%')">%</button>
+            <button onclick="appendToDisplay('/')">÷</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('*')">×</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('-')">-</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('+')">+</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
         </div>
     </div>
 
     <script>
-        let lengthInput = document.getElementById('length');
-        let lengthValue = document.getElementById('lengthValue');
-        let uppercaseCheck = document.getElementById('uppercase');
-        let lowercaseCheck = document.getElementById('lowercase');
-        let numbersCheck = document.getElementById('numbers');
-        let specialCheck = document.getElementById('special');
-        let resultDisplay = document.getElementById('result');
+        let display = document.getElementById('display');
+        let expression = document.getElementById('expression');
+        let currentInput = '0';
+        let operator = '';
+        let firstOperand = null;
+        let currentExpression = '';
 
-        function updateLengthValue() {
-            lengthValue.textContent = lengthInput.value;
+        function appendToDisplay(value) {
+            if (['+', '-', '*', '/'].includes(value)) {
+                if (firstOperand === null) {
+                    firstOperand = parseFloat(currentInput);
+                    operator = value;
+                    currentExpression = currentInput + ' ' + value + ' ';
+                    currentInput = '0';
+                } else if (operator) {
+                    calculate();
+                    firstOperand = parseFloat(currentInput);
+                    operator = value;
+                    currentExpression = currentInput + ' ' + value + ' ';
+                    currentInput = '0';
+                }
+            } else if (value === '%') {
+                if (firstOperand !== null && operator) {
+                    let secondOperand = parseFloat(currentInput);
+                    secondOperand = (firstOperand * secondOperand) / 100;
+                    currentInput = secondOperand.toString();
+                    currentExpression = currentExpression.slice(0, -2) + '% ';
+                } else {
+                    currentInput = (parseFloat(currentInput) / 100).toString();
+                    currentExpression = currentInput + '% ';
+                }
+            } else {
+                if (currentInput === '0' && value !== '.') {
+                    currentInput = value;
+                } else if (value === '.' && currentInput.includes('.')) {
+                    return;
+                } else {
+                    currentInput += value;
+                }
+                if (!currentExpression.endsWith('=')) {
+                    currentExpression = currentExpression + value;
+                }
+            }
+            updateDisplay();
         }
 
-        function clearInput() {
-            lengthInput.value = '8';
-            lengthValue.textContent = '8';
-            uppercaseCheck.checked = true;
-            lowercaseCheck.checked = true;
-            numbersCheck.checked = true;
-            specialCheck.checked = true;
-            resultDisplay.textContent = '-';
+        function backspace() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            if (currentExpression.endsWith(' ')) {
+                currentExpression = currentExpression.slice(0, -3);
+            } else {
+                currentExpression = currentExpression.slice(0, -1);
+            }
+            updateDisplay();
         }
 
-        function generatePassword() {
-            const length = parseInt(lengthInput.value);
-            const useUppercase = uppercaseCheck.checked;
-            const useLowercase = lowercaseCheck.checked;
-            const useNumbers = numbersCheck.checked;
-            const useSpecial = specialCheck.checked;
+        function clearDisplay() {
+            currentInput = '0';
+            operator = '';
+            firstOperand = null;
+            currentExpression = '';
+            updateDisplay();
+        }
 
-            // Check if at least one character type is selected
-            if (!useUppercase && !useLowercase && !useNumbers && !useSpecial) {
-                alert('Please select at least one character type.');
-                return;
+        function updateDisplay() {
+            display.textContent = currentInput;
+            expression.textContent = currentExpression;
+        }
+
+        function calculate() {
+            if (firstOperand === null || operator === '') return;
+
+            let result;
+            const secondOperand = parseFloat(currentInput);
+            
+            switch (operator) {
+                case '+':
+                    result = firstOperand + secondOperand;
+                    break;
+                case '-':
+                    result = firstOperand - secondOperand;
+                    break;
+                case '*':
+                    result = firstOperand * secondOperand;
+                    break;
+                case '/':
+                    if (secondOperand === 0) {
+                        alert('Error: Division by zero!');
+                        clearDisplay();
+                        return;
+                    }
+                    result = firstOperand / secondOperand;
+                    break;
+                default:
+                    return;
             }
 
-            // Define character sets
-            const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-            const numbers = '0123456789';
-            const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-            // Build the character pool based on selected options
-            let chars = '';
-            if (useUppercase) chars += uppercase;
-            if (useLowercase) chars += lowercase;
-            if (useNumbers) chars += numbers;
-            if (useSpecial) chars += special;
-
-            // Generate the password
-            let password = '';
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * chars.length);
-                password += chars[randomIndex];
-            }
-
-            // Ensure the password meets the criteria (at least one character from each selected type)
-            let finalPassword = password;
-            if (useUppercase && !/[A-Z]/.test(finalPassword)) {
-                const randomIndex = Math.floor(Math.random() * length);
-                finalPassword = finalPassword.substring(0, randomIndex) + uppercase[Math.floor(Math.random() * uppercase.length)] + finalPassword.substring(randomIndex + 1);
-            }
-            if (useLowercase && !/[a-z]/.test(finalPassword)) {
-                const randomIndex = Math.floor(Math.random() * length);
-                finalPassword = finalPassword.substring(0, randomIndex) + lowercase[Math.floor(Math.random() * lowercase.length)] + finalPassword.substring(randomIndex + 1);
-            }
-            if (useNumbers && !/[0-9]/.test(finalPassword)) {
-                const randomIndex = Math.floor(Math.random() * length);
-                finalPassword = finalPassword.substring(0, randomIndex) + numbers[Math.floor(Math.random() * numbers.length)] + finalPassword.substring(randomIndex + 1);
-            }
-            if (useSpecial && !/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(finalPassword)) {
-                const randomIndex = Math.floor(Math.random() * length);
-                finalPassword = finalPassword.substring(0, randomIndex) + special[Math.floor(Math.random() * special.length)] + finalPassword.substring(randomIndex + 1);
-            }
-
-            resultDisplay.textContent = finalPassword;
+            currentExpression += ' = ' + result.toString();
+            currentInput = result.toString();
+            operator = '';
+            firstOperand = null;
+            updateDisplay();
         }
     </script>
 </body>
