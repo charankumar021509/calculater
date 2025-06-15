@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a2e; /* Deep navy blue */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .generator {
+            background-color: #1a1a2e; /* Deep navy blue */
+            padding: 20px;
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .length-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .length-section label {
+            color: #e0e0ff; /* Soft lavender */
+            font-size: 1em;
+        }
+
+        .length-section input[type="range"] {
+            width: 100%;
+        }
+
+        .length-section span {
+            color: #ff6f61; /* Coral red */
+            font-size: 1.2em;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .checkbox-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .checkbox-section label {
+            color: #e0e0ff; /* Soft lavender */
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .result {
+            color: #e0e0ff; /* Soft lavender */
+            font-size: 1.5em;
+            margin: 10px 0;
+            font-family: 'Cedarville Cursive', cursive;
+            background-color: #2e2e4a; /* Lighter navy */
+            padding: 10px;
+            border-radius: 10px;
+            word-break: break-all;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #4a4a6e; /* Muted purple-blue */
+            color: #ff6f61; /* Coral red */
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #5a5a8e; /* Lighter purple-blue */
+        }
+
+        button:active {
+            background-color: #3e3e5e; /* Darker purple-blue */
+        }
+
+        .generate-btn {
+            background-color: #ff6f61; /* Coral red */
+            color: #fff;
+        }
+
+        .generate-btn:hover {
+            background-color: #ff8a7a; /* Lighter coral */
+        }
+
+        .generate-btn:active {
+            background-color: #e65a50; /* Darker coral */
+        }
+    </style>
+</head>
+<body>
+    <div class="generator">
+        <div class="input-section">
+            <div class="length-section">
+                <label for="length">Password Length: <span id="lengthValue">8</span></label>
+                <input type="range" id="length" min="4" max="20" value="8" oninput="updateLengthValue()">
+            </div>
+            <div class="checkbox-section">
+                <label><input type="checkbox" id="uppercase" checked> Uppercase (A-Z)</label>
+                <label><input type="checkbox" id="lowercase" checked> Lowercase (a-z)</label>
+                <label><input type="checkbox" id="numbers" checked> Numbers (0-9)</label>
+                <label><input type="checkbox" id="special" checked> Special Characters (!@#)</label>
+            </div>
+        </div>
+        <div class="result" id="result">-</div>
+        <div class="buttons">
+            <button onclick="clearInput()">C</button>
+            <button class="generate-btn" onclick="generatePassword()">Generate</button>
+        </div>
+    </div>
+
+    <script>
+        let lengthInput = document.getElementById('length');
+        let lengthValue = document.getElementById('lengthValue');
+        let uppercaseCheck = document.getElementById('uppercase');
+        let lowercaseCheck = document.getElementById('lowercase');
+        let numbersCheck = document.getElementById('numbers');
+        let specialCheck = document.getElementById('special');
+        let resultDisplay = document.getElementById('result');
+
+        function updateLengthValue() {
+            lengthValue.textContent = lengthInput.value;
+        }
+
+        function clearInput() {
+            lengthInput.value = '8';
+            lengthValue.textContent = '8';
+            uppercaseCheck.checked = true;
+            lowercaseCheck.checked = true;
+            numbersCheck.checked = true;
+            specialCheck.checked = true;
+            resultDisplay.textContent = '-';
+        }
+
+        function generatePassword() {
+            const length = parseInt(lengthInput.value);
+            const useUppercase = uppercaseCheck.checked;
+            const useLowercase = lowercaseCheck.checked;
+            const useNumbers = numbersCheck.checked;
+            const useSpecial = specialCheck.checked;
+
+            // Check if at least one character type is selected
+            if (!useUppercase && !useLowercase && !useNumbers && !useSpecial) {
+                alert('Please select at least one character type.');
+                return;
+            }
+
+            // Define character sets
+            const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+            const numbers = '0123456789';
+            const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+            // Build the character pool based on selected options
+            let chars = '';
+            if (useUppercase) chars += uppercase;
+            if (useLowercase) chars += lowercase;
+            if (useNumbers) chars += numbers;
+            if (useSpecial) chars += special;
+
+            // Generate the password
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                password += chars[randomIndex];
+            }
+
+            // Ensure the password meets the criteria (at least one character from each selected type)
+            let finalPassword = password;
+            if (useUppercase && !/[A-Z]/.test(finalPassword)) {
+                const randomIndex = Math.floor(Math.random() * length);
+                finalPassword = finalPassword.substring(0, randomIndex) + uppercase[Math.floor(Math.random() * uppercase.length)] + finalPassword.substring(randomIndex + 1);
+            }
+            if (useLowercase && !/[a-z]/.test(finalPassword)) {
+                const randomIndex = Math.floor(Math.random() * length);
+                finalPassword = finalPassword.substring(0, randomIndex) + lowercase[Math.floor(Math.random() * lowercase.length)] + finalPassword.substring(randomIndex + 1);
+            }
+            if (useNumbers && !/[0-9]/.test(finalPassword)) {
+                const randomIndex = Math.floor(Math.random() * length);
+                finalPassword = finalPassword.substring(0, randomIndex) + numbers[Math.floor(Math.random() * numbers.length)] + finalPassword.substring(randomIndex + 1);
+            }
+            if (useSpecial && !/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(finalPassword)) {
+                const randomIndex = Math.floor(Math.random() * length);
+                finalPassword = finalPassword.substring(0, randomIndex) + special[Math.floor(Math.random() * special.length)] + finalPassword.substring(randomIndex + 1);
+            }
+
+            resultDisplay.textContent = finalPassword;
+        }
+    </script>
+</body>
+</html>
